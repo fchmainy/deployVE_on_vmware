@@ -15,6 +15,7 @@ source ./venv/bin/activate
 python3 -m pip install ansible
 pip3 install requests
 pip3 install PyVmomi
+pip3 install aiohttp
 ansible-galaxy collection install community.vmware
 ```
 
