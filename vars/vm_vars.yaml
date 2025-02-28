@@ -30,7 +30,7 @@ do_hash: e6e0a59cd0eb58dc829bf93ba414533db864fc965a5d0b71a193a9f85c455332
 as3_version: 3.51.0
 as3_url: https://192.170.17.2/admin/f5_rpms/raw/branch/main/f5-appsvcs-3.53.0-7.noarch.rpm
 as3_hash: eb32e940bab48312536dd9b21645b8b3d4882c168059dfbc0a47ed31a9fadb1c
-package_url: http://192.170.17.2/admin/f5_rpms/raw/branch/main/f5-bigip-runtime-init-2.0.3-1.gz.run
+package_url: https://192.170.17.2/admin/f5_rpms/raw/branch/main/f5-bigip-runtime-init-2.0.3-1.gz.run
 
 # SSH Keys
 ssh_keys:
