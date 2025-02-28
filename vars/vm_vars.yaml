@@ -1,0 +1,38 @@
+admin_username: "admin"
+admin_password: "ChangeMe#123#"
+
+vm_name: "myDemoBigip"
+hostname: "bigip1.f5demo.local"
+license_key: "AAAAA-BBBBB-CCCCC-DDDDD-EEEEE"
+
+ova_file_name: "Myimages/BIGIP-17.1.2.1-0.0.2.ALL-vmware.ova"
+
+
+
+# IP Addressing
+mgmt_ip: "192.170.17.34"
+mgmt_prefix: "25"
+mgmt_gateway: "192.170.17.1"
+mgmt_dns: "8.8.8.8"
+external_ip: "192.170.16.34"
+external_prefix: "25"
+external_gateway: "192.170.16.1"
+external_dns: "8.8.8.8"
+internal_ip: "192.170.16.134"
+internal_prefix: "25"
+internal_gateway: "192.170.16.129"
+internal_dns: "8.8.8.8"
+
+# Packages
+do_version: 1.44.0
+do_url: https://192.170.17.2/admin/f5_rpms/raw/branch/main/f5-declarative-onboarding-1.46.0-7.noarch.rpm
+do_hash: e6e0a59cd0eb58dc829bf93ba414533db864fc965a5d0b71a193a9f85c455332
+as3_version: 3.51.0
+as3_url: https://192.170.17.2/admin/f5_rpms/raw/branch/main/f5-appsvcs-3.53.0-7.noarch.rpm
+as3_hash: eb32e940bab48312536dd9b21645b8b3d4882c168059dfbc0a47ed31a9fadb1c
+package_url: http://192.170.17.2/admin/f5_rpms/raw/branch/main/f5-bigip-runtime-init-2.0.3-1.gz.run
+
+# SSH Keys
+ssh_keys:
+- ssh-rsa AAAAB3NzaCgd0= user1@ubuntu
+- ssh-ed25519 AAAAC3NzaC1lZDI1N21cKfSosXfsrBWxUFnB user2@machine2
