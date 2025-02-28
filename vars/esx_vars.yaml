@@ -1,0 +1,11 @@
+vm_networks:
+  management: "mgmt_subnet"
+  external: "external_subnet"
+  internal: "internal_subnet"
+vcenter_hostname: "192.170.1.101"
+vcenter_username: "administrator@vsphere.local"
+vcenter_password: ""
+vcenter_datacenter: "vc01-dc01"
+vm_cluster: "vc01-cl01"
+vm_folder: "/vc01-dc01/vm/myFolder"
+vm_datastore: "myDatastore"
