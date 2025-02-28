@@ -1,0 +1,39 @@
+---
+- name: Deploy OVA and create template
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - ./vars/esx_vars.yaml
+    - ./vars/vm_vars.yaml
+  tasks:
+    - name: Deploy OVA from local file
+      community.vmware.vmware_deploy_ovf:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ vcenter_datacenter }}"
+        cluster: "{{vm_cluster}}"
+        datastore: "{{ vm_datastore }}"
+        folder: "/wld-w01-dc01/vm/CreditMutuel"
+        name: "BIGIP17120"
+        ovf: "BIGIP-17.1.2.1-0.0.2.ALL-vmware.ova"
+        networks:
+          Management: "{{ vm_networks.management }}"
+          External: "{{ vm_networks.external }}"
+          Internal: "{{ vm_networks.internal }}"
+          HA: "{{ vm_networks.external }}"
+        power_on: no
+      delegate_to: localhost
+
+    - name: Convert VM to template
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ vcenter_datacenter }}"
+        folder: "/wld-w01-dc01/vm/CreditMutuel"
+        name: "BIGIP17120"
+        is_template: true
+      delegate_to: localhost
