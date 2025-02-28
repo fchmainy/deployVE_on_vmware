@@ -1,0 +1,74 @@
+---
+- name: Deploy VM from OVA with fixed IP addresses and user-data
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - ./vars/esx_vars.yaml
+    - ./vars/vm_vars.yaml
+  tasks:
+    - name: Render Runtime Init Config
+      set_fact:
+        runtimeinit: "{{ lookup('template', './templates/runtime_init.j2') }}"
+
+    - name: debug
+      debug:
+        msg: "{{ runtimeinit }}"
+
+    - name: Add RuntimeInit configuration into the startup script and render other variables like package URL
+      set_fact:
+        userdata: "{{ lookup('template', './templates/startupscript.j2') }}"
+    - name: debug
+      debug:
+        msg="{{ userdata }}"
+
+    - name: Deploy VM from template
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ vcenter_datacenter }}"
+        folder: "/wld-w01-dc01/vm/myFolder"
+        name: "{{ vm_name }}"
+        template: "BIGIP17120"
+        cluster: "{{ vm_cluster }}"
+        hardware:
+          memory_mb: 4096
+          num_cpus: 2
+        networks:
+          - name: "{{ vm_networks.management }}"
+            ip: "{{ mgmt_ip }}"
+            netmask: "255.255.255.128"
+            device_type: vmxnet3
+          - name: "{{ vm_networks.external }}"
+            ip: "{{ external_ip }}"
+            netmask: "255.255.255.128"
+            gateway: "{{ external_gateway }}"
+            device_type: vmxnet3
+          - name: "{{ vm_networks.internal }}"
+            ip: "{{ internal_ip }}"
+            netmask: "255.255.255.128"
+            device_type: vmxnet3
+          - name: "{{ vm_networks.external }}"
+            ip: "192.170.16.35"
+            netmask: "255.255.255.128"
+            device_type: vmxnet3
+        vapp_properties:
+        - id: net.mgmt.addr
+          type: string
+          value: "{{ mgmt_ip }}/{{ mgmt_prefix }}"
+        - id: net.mgmt.gw
+          type: string
+          value: "{{ mgmt_gateway }}"
+        - id: user.root.pwd
+          type: password
+          value: "{{ admin_password }}"
+        - id: user.admin.pwd
+          type: password
+          value: "{{ admin_password }}"
+        - id: user-data
+          type: string
+          value: "{{ userdata | b64encode}}"
+        wait_for_ip_address: no
+        state: poweredoff
+      register: deploy
