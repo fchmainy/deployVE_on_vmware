@@ -26,7 +26,7 @@ exec 2>&1
 
 # Download
 for i in {1..30}; do
-    curl -fv --retry 1 --connect-timeout 5 -L "{{ package_url }}" -o "/var/config/rest/downloads/f5-bigip-runtime-init.gz.run" && break || sleep 10
+    curl -kfv --retry 1 --connect-timeout 5 -L "{{ package_url }}" -o "/var/config/rest/downloads/f5-bigip-runtime-init.gz.run" && break || sleep 10
 done
 # Install
 bash /var/config/rest/downloads/f5-bigip-runtime-init.gz.run -- '--skip-verify --skip-toolchain-metadata-sync'
