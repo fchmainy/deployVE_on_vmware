@@ -1,0 +1,39 @@
+#!/bin/bash -x
+
+CONFIG_FILE=/config/cloud/runtime-init-conf.yaml
+
+# Send output to log file and serial console
+mkdir -p  /var/log/cloud /config/cloud /var/config/rest/downloads
+echo "{{ runtimeinit }}" > $CONFIG_FILE
+LOG_FILE=/var/log/cloud/startup-script.log
+[[ ! -f $LOG_FILE ]] && touch $LOG_FILE || { echo "Run Only Once. Exiting"; exit; }
+npipe=/tmp/$$.tmp
+trap "rm -f $npipe" EXIT
+mknod $npipe p
+tee <$npipe -a $LOG_FILE /dev/ttyS0 &
+exec 1>&-
+exec 1>$npipe
+exec 2>&1
+
+# Run Immediately Before MCPD starts
+/usr/bin/setdb provision.extramb 1000 || true
+/usr/bin/setdb provision.restjavad.extramb 1384 || /usr/bin/setdb restjavad.useextramb true || true
+/usr/bin/setdb iapplxrpm.timeout 300 || true
+/usr/bin/setdb icrd.timeout 180 || true
+/usr/bin/setdb restjavad.timeout 180 || true
+/usr/bin/setdb restnoded.timeout 180 || true
+
+
+# Download
+for i in {1..30}; do
+    curl -fv --retry 1 --connect-timeout 5 -L "{{ package_url }}" -o "/var/config/rest/downloads/f5-bigip-runtime-init.gz.run" && break || sleep 10
+done
+# Install
+bash /var/config/rest/downloads/f5-bigip-runtime-init.gz.run -- '--skip-verify --skip-toolchain-metadata-sync'
+# Run
+for i in {1..30}; do
+    if [ -f "$CONFIG_FILE" ]; then
+       f5-bigip-runtime-init --config-file $CONFIG_FILE
+    else sleep 10
+    fi
+done
