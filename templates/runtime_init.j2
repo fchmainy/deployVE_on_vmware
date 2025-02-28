@@ -1,0 +1,114 @@
+controls:
+  logLevel: silly
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
+pre_onboard_enabled:
+  - name: provision_rest
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.extramb 1000 || exit 0
+      - /usr/bin/setdb provision.restjavad.extramb 1384 || /usr/bin/setdb restjavad.useextramb
+        true || exit 0
+      - /usr/bin/setdb iapplxrpm.timeout 300 || exit 0
+      - /usr/bin/setdb icrd.timeout 180 || exit 0
+      - /usr/bin/setdb restjavad.timeout 180 || exit 0
+      - /usr/bin/setdb restnoded.timeout 180 || exit 0
+bigip_ready_enabled: []
+extension_packages:
+  install_operations:
+    - extensionType: do
+      extensionVersion: "{{ do_version }}"
+      extensionUrl: "{{ do_url }}"
+      verifyTls: False
+    - extensionType: as3
+      extensionVersion: "{{ as3_version }}"
+      extensionUrl: "{{ as3_url }}"
+      verifyTls: False
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        label: Automated deployment
+        async: true
+        Common:
+          class: Tenant
+          hostname: "{{ hostname }}"
+          admin:
+            class: User
+            partitionAccess:
+              all-partitions:
+                role: admin
+            password: "{{ admin_password }}"
+            userType: regular
+            shell: bash
+            keys:
+            {% for key in ssh_keys %}
+            - {{ key }}
+            {% endfor %}
+
+          My_System:
+            class: System
+            hostname: "{{ hostname }}"
+            cliInactivityTimeout: 1200
+            consoleInactivityTimeout: 1200
+            autoPhonehome: true
+          default:
+            class: ManagementRoute
+            gw: "{{ mgmt_gateway }}"
+            network: default
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1460
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          internal:
+            class: VLAN
+            tag: 4093
+            mtu: 1460
+            interfaces:
+              - name: '1.2'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: "{{ external_ip }}/{{ external_prefix }}"
+            vlan: external
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          internal-self:
+            class: SelfIp
+            address: "{{ internal_ip }}/{{ internal_prefix }}"
+            vlan: internal
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          default_gateway:
+            class: Route
+            gw: "{{ external_gateway }}"
+            mtu: 1460
+            network: default
+          customDbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            ui.advisory.enabled: true
+            ui.advisory.color: blue
+            ui.advisory.text: OpenShift CIS Demo
+          customLicense:
+            class: License
+            licenseType: regKey
+            regKey: "{{ license_key }}"
+          customProvisioning:
+            class: Provision
+            asm: nominal
+            ltm: nominal
+          customNtp:
+            class: NTP
+            servers:
+              - pool.ntp.org
+            timezone: UTC
+          customDns:
+            class: DNS
+            nameServers:
+              - 8.8.8.8
