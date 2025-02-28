@@ -48,12 +48,6 @@ extension_services:
             - {{ key }}
             {% endfor %}
 
-          My_System:
-            class: System
-            hostname: "{{ hostname }}"
-            cliInactivityTimeout: 1200
-            consoleInactivityTimeout: 1200
-            autoPhonehome: true
           default:
             class: ManagementRoute
             gw: "{{ mgmt_gateway }}"
