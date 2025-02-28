@@ -28,5 +28,7 @@ ansible-galaxy collection install community.vmware
 ## Deploy OVA and create template
 
 
-
+```
+ansible-playbook -vvv create_F5_VE.yaml
+```
 
