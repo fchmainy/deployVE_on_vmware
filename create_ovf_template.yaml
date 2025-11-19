@@ -15,7 +15,7 @@
         datacenter: "{{ vcenter_datacenter }}"
         cluster: "{{vm_cluster}}"
         datastore: "{{ vm_datastore }}"
-        folder: "/wld-w01-dc01/vm/CreditMutuel"
+        folder: "/wld-w01-dc01/vm/myFolder"
         name: "BIGIP17120"
         ovf: "BIGIP-17.1.2.1-0.0.2.ALL-vmware.ova"
         networks:
@@ -33,7 +33,7 @@
         password: "{{ vcenter_password }}"
         validate_certs: no
         datacenter: "{{ vcenter_datacenter }}"
-        folder: "/wld-w01-dc01/vm/CreditMutuel"
+        folder: "/wld-w01-dc01/vm/myFolder"
         name: "BIGIP17120"
         is_template: true
       delegate_to: localhost
